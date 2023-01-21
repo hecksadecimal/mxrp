@@ -241,11 +241,7 @@ class ChatHandler(WebSocketHandler):
             del self._db
 
     async def redis_listen(self):
-        self.redis_client = await asyncio_redis.Connection.create(
-            host=os.environ["REDIS_HOST"],
-            port=int(os.environ["REDIS_PORT"]),
-            db=int(os.environ["REDIS_DB"]),
-        )
+        self.redis_client = await asyncio_redis.Connection.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'), db=0, decode_responses=True)
         # Set the connection name, subscribe, and listen.
         await self.redis_client.client_setname("live:%s:%s" % (self.chat_id, self.user_id))
 
@@ -313,11 +309,7 @@ class SearchHandler(WebSocketHandler):
             self.close()
 
     async def redis_listen(self):
-        self.redis_client = await asyncio_redis.Connection.create(
-            host=os.environ["REDIS_HOST"],
-            port=int(os.environ["REDIS_PORT"]),
-            db=int(os.environ["REDIS_DB"]),
-        )
+        self.redis_client = await asyncio_redis.Connection.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'), db=0, decode_responses=True)
         # Set the connection name, subscribe, and listen.
         await self.redis_client.client_setname("searcher:%s" % self.searcher_id)
         try:

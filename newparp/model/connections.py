@@ -28,19 +28,9 @@ def session_scope():
 
 
 # Redis DB for sessions, caching etc.
-redis_pool = ConnectionPool(
-    host=os.environ["REDIS_HOST"],
-    port=int(os.environ["REDIS_PORT"]),
-    db=int(os.environ["REDIS_DB"]),
-    decode_responses=True,
-)
+redis_pool = ConnectionPool.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'), db=0, decode_responses=True)
 # Redis db for chat info.
-redis_chat_pool = ConnectionPool(
-    host=os.environ["REDIS_HOST"],
-    port=int(os.environ["REDIS_PORT"]),
-    db=int(os.environ["REDIS_CHAT_DB"]),
-    decode_responses=True,
-)
+redis_chat_pool = ConnectionPool.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'), db=1, decode_responses=True)
 
 
 class NewparpRedis(StrictRedis):
