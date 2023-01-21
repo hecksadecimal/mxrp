@@ -37,7 +37,7 @@ from sqlalchemy import (
 )
 
 engine = create_engine(
-    os.environ["POSTGRES_URL"],
+    os.environ["DATABASE_URL"],
     convert_unicode=True,
     echo="ECHO" in os.environ or "--debug" in sys.argv,
     poolclass=NullPool,
