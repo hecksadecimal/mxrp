@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title: %}Group chats - {% endblock %}
+{% block content: %}
+    <div id="create_chat" class="common_box">
+        <h2><label><span>&gt; Create a group chat</span></label></h2>
+        <div class="common_box_wrap" id="group_chat_creator">
+            {% if "create_chat_error" in request.args: %}
+            {% if request.args["create_chat_error"] == "url_invalid": %}
+            <p class="error">That URL isn't valid. Chat URLs can only contain letters, numbers, hyphens and underscores.</p>
+            {% elif request.args["create_chat_error"] == "url_taken": %}
+            <p class="error">That URL has already been taken.</p>
+            {% endif %}
+            {% endif %}
+            <form action="{{url_for("rp_create_chat")}}" method="post">
+                <input type="hidden" name="token" value="{{g.csrf_token}}">
+                <p><div class="input"><input type="text" id="c_chat_name" name="url" maxlength="50" required><label for="c_chat_name">Chat URL</label></div> <button type="submit" class="labelled_button">Create</button></p>
+            </form>
+        </div>
+    </div>
+    <div id="filter_chats" class="common_box">
+        <h2><label><span>Existing group chats</span></label></h2>
+        <div class="common_box_wrap">
+        <form action="{{url_for("rp_groups")}}" method="get">
+            <p class="textlabel">Style:
+                <div class="input"><input type="checkbox" id="filter_chats_script" name="script"{% if "script" in style_filter: %} checked="checked"{% endif %}><label for="filter_chats_script">Script</label></div>
+                <div class="input"><input type="checkbox" id="filter_chats_para" name="paragraph"{% if "paragraph" in style_filter: %} checked="checked"{% endif %}><label for="filter_chats_para">Paragraph</label></div>
+                <div class="input"><input type="checkbox" id="filter_chats_either" name="either"{% if "either" in style_filter: %} checked="checked"{% endif %}><label for="filter_chats_either">Either</label></div>
+            </p>
+            <p class="textlabel">Level:
+                {% for option, name in level_options.items(): %}
+                    {% if option in allowed_levels %}
+                        <div class="input"><input type="checkbox" id="filter_chats_{{option}}" name="{{option}}"{% if option in level_filter: %} checked="checked"{% endif %}><label for="filter_chats_{{option}}">{{name}}</label></div>
+                    {% endif %}
+                {% endfor %}
+            </p>
+            {% if g.user.age_group == AgeGroup.unknown: %}
+                <p>Please enter your date of birth on <a href="{{url_for("settings")}}">the settings page</a> to access NSFW (sexual) and NSFW extreme chats.</span></p>
+            {% endif %}
+            <p><button type="submit">Apply</button></p>
+        </form>
+            <ul id="group_chats">
+            {% for chat in groups: %}
+            <li>
+                <h3>{% if chat.publicity == "pinned": %}<span title="Pinned chat">🔮</span> {% endif %}<a href="{{url_for("rp_chat", url=chat.url)}}">{{chat.title}}</a></h3>
+                <p class="subtitle">{{chat.style.capitalize()}} style, {{ level_options[chat.level] }}, {{chat.online}} online.</p>
+                <p class="desc" tabindex="0">{% if chat.topic != "": %}
+                <span title="expand description">{{chat.topic}}</span>
+                {% endif %}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+{% endblock %}
+

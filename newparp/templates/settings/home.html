@@ -1,0 +1,103 @@
+{% extends "settings/base.html" %}
+{% block title: %}Settings - {% endblock %}
+{% block content: %}
+    {{ super() }}
+    <div class="settings_box">
+        <div class="settings_box_wrap">
+            <h2>Default settings for new chats</h2>
+            <form action="{{url_for("settings_post")}}" method="post">
+                <input type="hidden" name="token" value="{{g.csrf_token}}">
+                <div class="input"><p><input type="checkbox" id="confirm_disconnect" name="confirm_disconnect"{% if g.user.confirm_disconnect: %} checked="checked"{% endif %}><label for="confirm_disconnect"> Confirm disconnect</label></p></div>
+                <div class="input"><p><input type="checkbox" id="desktop_notifications" name="desktop_notifications"{% if g.user.desktop_notifications: %} checked="checked"{% endif %}><label for="desktop_notifications"> Desktop notifications</label></p></div>
+                <div class="input"><p><input type="checkbox" id="show_system_messages" name="show_system_messages"{% if g.user.show_system_messages: %} checked="checked"{% endif %}><label for="show_system_messages"> Show system messages</label></p></div>
+                <div class="input"><p><input type="checkbox" id="show_user_numbers" name="show_user_numbers"{% if g.user.show_user_numbers: %} checked="checked"{% endif %}> <label for="show_user_numbers">Show user numbers</label></p></div>
+                <div class="input"><p><input type="checkbox" id="show_bbcode" name="show_bbcode"{% if g.user.show_bbcode: %} checked="checked"{% endif %}><label for="show_bbcode"> Show BBCode</label></p></div>
+                <div class="input"><p><input type="checkbox" id="show_timestamps" name="show_timestamps"{% if g.user.show_timestamps: %} checked="checked"{% endif %}><label for="show_timestamps"> Show timestamps</label></p></div>
+                <div class="input"><p><input type="checkbox" id="show_preview" name="show_preview"{% if g.user.show_preview: %} checked="checked"{% endif %}><label for="show_preview"> Show preview</label></p></div>
+                <div class="input"><p><input type="checkbox" id="typing_notifications" name="typing_notifications"{% if g.user.typing_notifications: %} checked="checked"{% endif %}><label for="typing_notifications"> Typing notifications</label></p></div>
+                <div class="input"><p><input type="checkbox" id="enable_activity_indicator" name="enable_activity_indicator"{% if g.user.enable_activity_indicator: %} checked="checked"{% endif %}><label for="enable_activity_indicator"> <span class="long_settings_names">Enable chat activity indicator</span><span class="short_settings_names">Enable activity indicator</span></label></p></div>
+                <button type="submit">Save</button>
+            </form>
+            <h2>Device settings</h2>
+            <span class="textlabel">These settings are specific to your current device/browser to allow better control.</span>
+            <div class="not_input"><p><input type="checkbox" id="basic_forms" class="device_settings" name="basic_form_elements"><label for="basic_forms"> Use basic form elements</label> <a class="explanation_link" onclick="$('#basic_forms_explain').toggle()">(?)</a></p></div>
+            <span id="basic_forms_explain" class="explanation" style="display:none">This option will revert checkboxes, text fields, buttons, and dropdowns back to your browser's default forms. Enable this option if you would like to remove all styling from the items mentioned above. This can help compatibility if you are having problems or are using an outdated device.</span>
+            <div class="input"><p><input type="checkbox" id="safe_bbcode" class="device_settings" name="safe_bbcode"><label for="safe_bbcode"> <span class="long_settings_names">Prevent quirks from breaking BBCode</span><span class="short_settings_names">Safe BBCode</span></label> <a class="explanation_link" onclick="$('#safe_bbcode_explain').toggle()">(?)</a></p></div>
+            <span id="safe_bbcode_explain" class="explanation" style="display:none">This option will prevent regular quirks from affecting BBCode, without you having to disable your quirk for the entire line. It also improves support for quirks heavily relying on <a href="https://mxrp.chat/bbcodeguide#t3">colors</a> and <a href="https://msparp.com/bbcodeguide#t6">gradients</a>. Only things within [BBCode tags] will be unquirked by this option, but you can disable this if necessary.</span>
+            <div class="input"><p><input type="checkbox" id="smart_quirk" class="device_settings" name="smart_quirk"><label for="smart_quirk"> <span class="long_settings_names">Enable smart quirking for actions and dialogue</span><span class="short_settings_names">Enable smart quirking</span></label> <a class="explanation_link" onclick="$('#smart_quirk_explain').toggle()">(?)</a></p></div>
+            <span id="smart_quirk_explain" class="explanation" style="display:none">If you enable smart quirking, MxRP will automatically disable quirks during actions on Script Style, and will automatically enable quirks during dialogue on Paragraph Style. You can choose which symbols you use for actions or dialogue, such as * for actions and " for speech (these symbols are known as <i>delimiters</i>). A closing delimiter is automatically appended to the end of the line if not specified. When you are in a chat, you can toggle between smart quirking for Paragraph Style, Script Style or disable smart quirking completely by accessing your Settings from the sidebar of your chat. The setting will be remembered when you visit the chat again.<br><br>For example (with default settings):<br><strong>Script mode =></strong> <em>This text is quirked</em> *With an unquirked action*<br><strong>Paragraph mode =></strong> This text is not quirked. "<em>This text is quirked.</em>", they rebutted.<br><br></span>
+            <div class="input smart_quirk_settings"><p>
+                <input type="text" id="smart_action_delimiter" name="smart_action_delimiter" size="20" maxlength="5">
+                <label for="smart_action_delimiter">Action delimiter</label>
+            </p></div>
+            <div class="input smart_quirk_settings"><p>
+                <input type="text" id="smart_dialogue_delimiter" name="smart_dialogue_delimiter" size="20" maxlength="5">
+                <label for="smart_dialogue_delimiter">Dialogue delimiter</label>
+            </p></div>
+            <div class="input"><p><input type="checkbox" id="wrap_smart_quirks" class="device_settings" name="wrap_smart_quirks"><label for="wrap_smart_quirks"> Prefix/suffix each <span class="long_settings_names">smart quirk</span> block</label> <a class="explanation_link" onclick="$('#wrap_smart_quirks_explain').toggle()">(?)</a></p></div>
+            <span id="wrap_smart_quirks_explain" class="explanation" style="display:none">By default, your quirk prefix and suffix are appended to the entire line, rather than just the sections between delimiters. If you prefer to have your prefix in front of each bit of quirked dialogue, and your suffix after, you can enable this option.</span>
+            <div class="input"><p><input type="checkbox" id="material_feedback" class="device_settings" name="material_feedback"><label for="material_feedback"> <span class="long_settings_names">Enable visual feedback for touch/click events on buttons</span><span class="short_settings_names">Button touch animations</span></label> <a class="explanation_link" onclick="$('#material_explain').toggle()">(?)</a></p></div>
+            <span id="material_explain" class="explanation" style="display:none">This option enables ripple-like animations on buttons and dropdown boxes, among other things, similar to Android's native touch feedback.</span>
+            <div class="input"><p><input type="checkbox" id="disable_hotkeys" class="device_settings" name="disable_hotkeys"><label for="disable_hotkeys"> Disable keyboard shortcuts</label> <a class="explanation_link" onclick="$('#hotkeys_explain').toggle()">(?)</a></p></div>
+            <span id="hotkeys_explain" class="explanation" style="display:none">
+            <strong><em>Disables</em></strong> BBCode keyboard shortcuts when the chat line is in focus. <br><br> The shortcuts normally available are: <br><strong>Ctrl+Alt+Enter: [br] </strong> | <strong> Ctrl+Alt+C: [c][/c] (caps) </strong> | <strong> Ctrl+Alt+J: [sup][/sup] </strong> <br> <strong> Ctrl+Alt+K: [sub][/sub] </strong> | <strong> Ctrl+Alt+B: [b][/b] </strong> | <strong> Ctrl+Alt+F: [font=][/font] </strong> <br> <strong> Ctrl+Alt+H: [color=][/color] </strong> | <strong> Ctrl+Alt+I: [i][/i] </strong> | <strong> Ctrl+Alt+L: [alternian][/alternian] </strong> <br> <strong> Ctrl+Alt+O: [url=][/url] </strong> | <strong> Ctrl+Alt+P: [spoiler][/spoiler] </strong> | <strong> Ctrl+Alt+R: [raw][/raw] </strong> <br> <strong> Ctrl+Alt+S: [s][/s] </strong> | <strong> Ctrl+Alt+U: [u][/u] </strong> | <strong> Ctrl+Alt+W: [w][/w] (whisper)</strong><br> <strong> Ctrl+Alt+G: [bgcolor=][/bgcolor]</strong> | <strong> Ctrl+Alt+period: toggle text preview on/off</strong><br><br> If text is currently selected, the tags will be applied to this selection, otherwise a pair of tags will be inserted at your current position.</span>
+            <div class="input"><p><input type="checkbox" id="disable_animations" class="device_settings" name="disable_animations"><label for="disable_animations"> Disable all theme animations</label></p></div>
+            <div class="input"><p><input type="checkbox" id="disable_left_bar" class="device_settings" name="disable_left_bar"><label for="disable_left_bar"> Disable left side bars</label></p></div>
+            <div class="input"><p><input type="checkbox" id="collapse_padding" class="device_settings" name="smart_quirk"><label for="collapse_padding"> <span class="long_settings_names">Collapse horizontal page margins</span><span class="short_settings_names">Collapse page margins</span></label> <a class="explanation_link" onclick="$('#collapse_padding_explain').toggle()">(?)</a></p></div>
+            <span id="collapse_padding_explain" class="explanation" style="display:none">In the interest of readability, chat and content width is kept manageable on large, wide screen, displays by default. If you prefer for the page contents to stretch to the outer corners of your screen no matter what, you can enable this option to override this.</span>
+            <h2>Site theme</h2>
+            <form action="{{url_for("settings_theme")}}" method="post">
+                <input type="hidden" name="token" value="{{g.csrf_token}}">
+                <div class="input select"><select name="theme">
+                    <option value=""{% if g.user.theme == None %} selected="selected"{% endif %}>Default</option>
+                    {% for theme, name in themes.items(): %}
+                    <option value="{{theme}}"{% if theme == g.user.theme %} selected="selected"{% endif %}>{{name}}</option>
+                    {% endfor %}
+                </select></div>
+                <button type="submit" class="fit_select_button">Save</button>
+            </form>
+            <h2>Time zone</h2>
+            <form action="{{url_for("settings_timezone")}}" method="post">
+                <input type="hidden" name="token" value="{{g.csrf_token}}">
+                <div class="input select"> <select name="timezone">
+                    {% for timezone in timezones: %}
+                    <option{% if timezone == g.user.timezone or (timezone == "UTC" and g.user.timezone == None)  %} selected="selected"{% endif %}>{{timezone.replace("_", " ")}}</option>
+                    {% endfor %}
+                </select></div>
+                <button type="submit" class="fit_select_button">Save</button>
+            </form>
+            <h2>Age</h2>
+            {% if g.user.date_of_birth %}
+                <p>Your date of birth is {{ g.user.date_of_birth.strftime("%d %B %Y") }}, which makes you {{ g.user.age }}.</p>
+                {% if g.user.age_group == AgeGroup.under_18: %}
+                    <form action="{{url_for("settings_pm_age_restriction")}}" method="post">
+                        <input type="hidden" name="token" value="{{g.csrf_token}}">
+                        <div class="input"><p><input type="checkbox" id="pm_age_restriction" name="pm_age_restriction"{% if g.user.pm_age_restriction: %} checked="checked"{% endif %}><label for="pm_age_restriction"> Don't allow users over 18 to PM me</label></p></div>
+                        <button type="submit">Save</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                {% if error == "invalid_date": %}
+                    <p class="error">That's not a valid date.</p>
+                {% endif %}
+                <form action="{{url_for("settings_date_of_birth")}}" method="post">
+                    <input type="hidden" name="token" value="{{g.csrf_token}}">
+                    <div class="input smart_quirk_settings"><p>
+                        <input type="text" id="dob_year" name="year" size="4" maxlength="4" required>
+                        <label for="dob_year">YYYY</label>
+                    </p></div>
+                    <div class="input smart_quirk_settings"><p>
+                        <input type="text" id="dob_month" name="month" size="2" maxlength="2" required>
+                        <label for="dob_month">MM</label>
+                    </p></div>
+                    <div class="input smart_quirk_settings"><p>
+                        <input type="text" id="dob_day" name="day" size="2" maxlength="2" required>
+                        <label for="dob_day">DD</label>
+                    </p></div>
+                    <button type="submit" class="fit_select_button">Save</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

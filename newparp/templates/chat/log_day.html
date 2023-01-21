@@ -1,0 +1,94 @@
+{% extends "chat/base.html" %}
+{% macro day_navigation(): %}
+{% if previous_day or next_day: %}
+<p class="pager">
+{% if previous_day: %}
+  <span class="previous_day">&laquo; <a href="{{url_for("rp_log_day", url=url, year=previous_day.year, month=previous_day.strftime("%m"), day=previous_day.strftime("%d"))}}">{{previous_day.strftime("%Y-%m-%d")}}</a></span>
+{% endif %}
+{% if next_day: %}
+  <span class="next_day"><a href="{{url_for("rp_log_day", url=url, year=next_day.year, month=next_day.strftime("%m"), day=next_day.strftime("%d"))}}">{{next_day.strftime("%Y-%m-%d")}}</a> &raquo;</span>
+{% endif %}
+</p>
+{% endif %}
+{% endmacro %}
+{% block content: %}
+
+<div id="chat_wrapper" class="log_wrapper">
+    <div id="chat_content">
+    
+        <nav id="global_navigation" class="in_chat_nav in_log_nav">
+            {% if g.user and g.unread_chats and g.unread_chats > 0: %}
+            <a id="unread_counter" href="{{url_for("rp_chat_list", type="unread")}}" target="_blank">{{g.unread_chats}}</a>
+            {% endif %}
+            <label for="nav_toggle" class="hide_nav"> Menu</label>
+            <input type="checkbox" id="nav_toggle" class="hide_nav">
+            <ul>
+                <li><a href="{{url_for("home")}}" target="_blank"><span class="long">Character search</span><span class="short">Search</span></a></li>
+                <li><a href="{{url_for("rp_groups")}}" target="_blank"><span class="long">Group chats</span><span class="short">Groups</span></a></li>
+                {% if g.user: %}
+                {% if g.user.is_admin: %}
+                <li><a href="{{url_for("admin_home")}}" target="_blank">Admin</a></li>
+                {% endif %}
+                <li class="user">
+                    <a href="#">{{g.user.username}}</a>
+                    <ul>
+                        <li><a href="{{url_for("rp_chat_list")}}" target="_blank">Your chats</a></li>
+                        <li><a href="{{url_for("rp_character_list")}}" target="_blank">Character creator</a></li>
+                        <li><a href="{{url_for("settings")}}" target="_blank">Settings</a></li>
+                        <li><form action="{{url_for("log_out")}}" method="post"><input type="hidden" name="token" value="{{g.csrf_token}}"><button type="submit">Log out</button></form></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <div class="log_top_nav">{{day_navigation()}}</div>
+
+        <section id="archive_conversation" {% if own_chat_user and not own_chat_user.show_user_numbers: %}class="hide_user_numbers"{% endif %}>            
+            {% if own_chat_user: %}
+            <div id="log_options">
+                <span class="options_label">Hide/show:</span>
+                <form action="{{url_for("save_variables")}}" method="POST">
+                    <input type="hidden" name="token" value="{{g.csrf_token}}">
+                    <input type="hidden" name="chat_id" value="{{chat.id}}">
+                    <input type="hidden" name="show_system_messages" value="{{"off" if own_chat_user.show_system_messages else "on"}}">
+                        <span class="hideshow_log_button"><button id="hideshow_system" type="submit" class="{{"is_shown" if own_chat_user.show_system_messages else "is_hidden"}}"><span>system messages</span></button></span>
+                </form>
+                <form action="{{url_for("save_variables")}}" method="POST">
+                    <input type="hidden" name="token" value="{{g.csrf_token}}">
+                    <input type="hidden" name="chat_id" value="{{chat.id}}">
+                    <input type="hidden" name="show_user_numbers" value="{{"off" if own_chat_user.show_user_numbers else "on"}}">
+                        <span class="hideshow_log_button"><button id="hideshow_users" type="submit" class="{{"is_shown" if own_chat_user.show_user_numbers else "is_hidden"}}"><span>user numbers</span></button></span>
+                </form>
+                <form>
+                        {% if request.args.get("mode") == "bbcode" %}
+                            <span class="hideshow_log_button"><button id="hideshow_bbcode_form" type="submit" class="is_shown"><span>bbcode format</span></button></span>
+                        {% else %}
+                            <span class="hideshow_log_button"><button id="hideshow_bbcode_form" onclick="window.location.href='?mode=bbcode'" class="is_hidden"><span>bbcode format</span></button></span>
+                        {% endif %}
+                </form>
+            </div>
+            {% endif %}
+            <div id="conversation_wrap" tabindex="1">
+                {% if messages: %}
+                {{render_messages(messages, bbcode_tags=request.args.get("mode") == "bbcode")}}
+                {% else: %}
+                <p>No messages.</p>
+                {% endif %}
+                {% if next_day == None and own_chat_user: %}
+                <p><a href="{{url_for("rp_chat", url=url)}}">Continue this chat</a></p>
+                {% endif %}
+            </div>
+        </section>
+
+        <div class="log_bottom_nav">{{day_navigation()}}</div>
+    
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts: %}
+{% if request.args.get("mode") != "bbcode" %}
+<script>msparp.log({{"true" if own_chat_user == None or own_chat_user.show_bbcode else "false"}});</script>
+{% endif %}
+{% endblock %}

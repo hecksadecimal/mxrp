@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% import "account/forms.html" as forms %}
+{% block content: %}
+    <section>
+        {{forms.register()}}
+    </section>
+{% endblock %}
+{% block scripts: %}
+<script>msparp.register();</script>
+{% endblock %}

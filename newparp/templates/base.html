@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+{% macro pager(): %}
+{% if paginator.page_count!=1 %}
+<div class="pager">
+{{paginator.pager(format="~5~")|safe}}
+</div>
+{% endif %}
+{% endmacro %}
+<html>
+<head>
+<title>{% block title: %}{% endblock %}MxRP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+{% if g.user and g.user.theme == "felt": %}
+<meta name="theme-color" content="#0e4603">
+{% elif g.user and g.user.theme in ("darkskin", "darkskin_monochrome"): %}
+<meta name="theme-color" content="#161823">
+{% else: %}
+<meta name="theme-color" content="#626262">
+{% endif %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0P8WK7FHCS"></script>
+{%  if config["GOOGLE_TAG_ID"] %}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', {{ config["GOOGLE_TAG_ID"] }});
+</script>
+{%  endif %}
+<script type="text/javascript"> // Make Apple webapp navigable without opening in Safari
+    (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(chref=d.href).replace(e.href,"").indexOf("#")&&(!/^[a-z\+\.\-]+:/i.test(chref)||chref.indexOf(e.protocol+"//"+e.host)===0)&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone");
+</script>
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="/static/img/icons/Favicon_192.png">
+<link rel="icon" sizes="32x32" href="/static/img/icons/Favicon_32.png">
+<link rel="icon" sizes="192x192" href="/static/img/icons/Favicon_192.png">
+<link rel="icon" sizes="16x16" href="/static/img/icons/Favicon_16.png">
+<link href='//fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="/static/css/normalize.css">
+<link rel="stylesheet" href="/static/css/newparp.css">
+{% if g.user and g.user.theme: %}
+<link id="theme_stylesheet" rel="stylesheet" href="/static/css/themes/{{g.user.theme}}.css">
+{% endif %}
+</head>
+<body ontouchstart="">
+<script> // Enable form element fallback, avoid flashing
+basic_forms=localStorage.getItem("basic_forms");
+if (basic_forms == "true") {
+document.body.className += ' no_forms';
+}
+</script>
+<div id="fixed-bg"></div>
+<div id="wrapper">
+    <div id="content">
+        <header>
+            <div id="users_online">
+                <p>{{g.redis.get("connected_users") or 0}} connected</p>
+                <p>{{g.redis.get("searching_users") or 0}} searching</p>
+            </div>
+            <h1>
+              <a id="logo_container" href="{{url_for("home")}}">
+                <img id="new_logo" src="/static/img/logo/horizontal_full_color.svg">
+              </a>
+            </h1>
+        </header>
+
+
+        <nav id="global_navigation">
+            <span id="unread_update">
+                {% if g.user and g.unread_chats and g.unread_chats > 0: %}
+                <a id="unread_counter" href="{{url_for("rp_chat_list", type="unread")}}">{{g.unread_chats}}</a>
+                {% endif %}
+            </span>
+            <label for="nav_toggle">Menu</label>
+            <input type="checkbox" id="nav_toggle">
+            <ul>
+                <li><a href="{{url_for("home")}}"><span class="long">Character search</span><span class="short">Search</span></a></li>
+                <li><a href="{{url_for("rp_groups")}}"><span class="long">Group chats</span><span class="short">Groups</span></a></li>
+                <li><a href="{{url_for("rp_chat_list")}}">Your chats</a></li>
+                <li><a href="{{url_for("rp_character_list")}}"><span class="long">Your characters</span><span class="short">Characters</span></a></li>
+                <li><a href="{{url_for("settings")}}">Settings</a></li>
+                {% if g.user: %}
+                {% if g.user.is_admin: %}
+                <li><a href="{{url_for("admin_home")}}">Admin</a></li>
+                {% endif %}
+                <li class="user">
+                    <form action="{{url_for("log_out")}}" method="post">
+                        <input type="hidden" name="token" value="{{g.csrf_token}}">
+                        <button type="submit">Log out</button>
+                    </form>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <main>
+            {% if g.user and g.ip_banned %}<p><strong>LOL UR IP BANNED</strong></p>{% endif %}
+            <section id="announcements">
+                <h2 class="announcements_link"><span class="announce_label">Announcements</span> <span id="toggle_announcement">(hide)</span></h2>
+                <div id="announcement_text">
+                    {{(g.redis.get("announcements") or "<p>No announcements.</p>")|safe}}
+                </div> 
+            </section>
+        {% block content: %}{% endblock %}
+        </main>
+        
+        <footer>
+            <ul>
+                <li><a href="https://mxrp.chat/bbcodeguide" target="_blank">BBCode Guide</a></li>
+                <li><a href="https://mxrp.chat/userguide" target="_blank">User Guide</a></li>
+                <li><a href="https://support.mxrp.chat/" target="_blank">Support</a></li>
+                <li><a href="https://mxrp.chat/rules" target="_blank">Site Rules</a></li>
+                <li><a href="https://mxrp.chat/tos" target="_blank">Terms Of Service</a></li>
+                <li><a href="https://patreon.com/mxrp" target="_blank">Patreon</a></li>
+            </ul>
+        </footer>
+        
+    </div>
+</div>
+
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+{% if g.user and g.user.timezone == None: %}
+<script src="/static/js/jstz-1.0.4.min.js"></script>
+<script>
+var timezone = jstz.determine().name();
+if (timezone) {
+    $.post("/settings/timezone", {"timezone": timezone, "token": {{g.csrf_token|tojson|safe}}});
+}
+</script>
+{% endif %}
+<script src="/static/js/spectrum.js"></script>
+{% if config["SENTRY_PUBLIC_DSN"] %}
+<script src="/static/js/raven-3.0.4.min.js"></script>
+<script>
+    Raven.config({{config["SENTRY_PUBLIC_DSN"]|tojson|safe}}).install();
+</script>
+{% endif %}
+<script src="/static/js/ui.js"></script>
+<script src="/static/js/newparp.js"></script>
+{% block scripts: %}{% endblock %}
+
+</body>
+</html>

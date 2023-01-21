@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% import "account/forms.html" as forms %}
+{% block content: %}
+    <section>
+        {{forms.log_in()}}
+    </section>
+{% endblock %}
+{% block scripts: %}
+<script>msparp.log_in();</script>
+{% endblock %}

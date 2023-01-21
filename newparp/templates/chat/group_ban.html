@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title: %}{{chat.computed_title()}} is private - {% endblock %}
+{% block content: %}
+    <div class="common_box">
+        <h2><label><span>Banned from chat</span></label></h2>
+        <div class="common_box_wrap">
+            <p>
+                Sorry, you can't enter this chat because the mods have banned you from it. If you want to contest this,
+                speak to the chat mods.
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
