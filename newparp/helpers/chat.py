@@ -6,7 +6,7 @@ from functools import wraps
 from sqlalchemy import and_, func
 from sqlalchemy.orm import joinedload
 
-from newparp.model import AgeGroup, allowed_level_options, Ban, Invite, ChatUser, User, Message
+from newparp.model import AgeGroup, allowed_level_options, Ban, Invite, ChatUser, Message
 from newparp.model.connections import NewparpRedis, redis_chat_pool
 from newparp.model.user_list import UserListStore
 from newparp.tasks import celery
@@ -129,7 +129,7 @@ def send_join_message(user_list, db, redis, context):
     chat_user = context.chat_user
 
     if chat_user not in db:
-        chat_user = db.query(User).get(chat_user.id)
+        chat_user = db.query(ChatUser).get((chat_user.chat_id, chat_user.user_id))
     
     if chat_user.computed_group == "silent" or context.chat.type in ("pm", "roulette"):
         send_userlist(user_list, db, context.chat)
