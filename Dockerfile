@@ -23,3 +23,5 @@ EXPOSE 5000
 
 # Set user
 USER user
+
+CMD ["/bin/sh", "/home/user/launch.sh"]
