@@ -126,7 +126,7 @@ class ChatHandler(WebSocketHandler):
         # Remember the user number so typing notifications can refer to it
         # without reopening the database session.
         self.user_number = self.chat_user.number
-        queue_user_meta(self, redis, self.request.headers.get("CF-Connecting-IP", self.request.remote_ip))
+        queue_user_meta(self, redis, self.request.headers.get("X-Forwarded-For", self.request.remote_ip))
 
         self.user_list = UserListStore(redis_chat, self.chat_id)
 
