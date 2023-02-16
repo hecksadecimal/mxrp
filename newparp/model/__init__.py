@@ -222,7 +222,7 @@ class User(Base):
 
     @property
     def is_admin(self):
-        return self.admin_tier is not None
+        return self.admin_tier_id is not None
 
     def has_permission(self, permission):
         if self.is_admin and permission in self.admin_tier.permissions:
@@ -1161,7 +1161,7 @@ Index("tags_type_name", Tag.type, Tag.name, unique=True)
 
 # 3. Relationships
 
-User.admin_tier = relation(AdminTier, backref="users", lazy=True)
+User.admin_tier = relation(AdminTier, backref="users")
 User.default_character = relation(
     Character,
     primaryjoin=User.default_character_id == Character.id,

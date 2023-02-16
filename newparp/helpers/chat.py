@@ -126,7 +126,12 @@ def send_join_message(user_list, db, redis, context):
         "chat_id": context.chat_user.chat_id,
     }))
 
-    if context.chat_user.computed_group == "silent" or context.chat.type in ("pm", "roulette"):
+    chat_user = context.chat_user
+
+    if chat_user not in db:
+        chat_user = db.query(User).get(chat_user.id)
+    
+    if chat_user.computed_group == "silent" or context.chat.type in ("pm", "roulette"):
         send_userlist(user_list, db, context.chat)
     else:
         last_message = db.query(Message).filter(Message.chat_id == context.chat.id).order_by(Message.posted.desc()).first()
@@ -138,16 +143,16 @@ def send_join_message(user_list, db, redis, context):
                 chat_id=context.chat.id,
                 user_id=context.user.id,
                 type="join",
-                name=context.chat_user.name,
+                name=chat_user.name,
                 text="%s [%s] joined chat. %s" % (
-                    context.chat_user.name,
-                    context.chat_user.acronym,
+                    chat_user.name,
+                    chat_user.acronym,
                     "~~MxRP STAFF~~" if context.user.is_admin else ""
                 ),
             ), user_list,
             raw_text="%s [%s] joined chat. %s" % (
-                    context.chat_user.name,
-                    context.chat_user.acronym,
+                    chat_user.name,
+                    chat_user.acronym,
                     "~~MxRP STAFF~~" if context.user.is_admin else ""
             ))
 
