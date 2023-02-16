@@ -6,7 +6,7 @@ from functools import wraps
 from sqlalchemy import and_, func
 from sqlalchemy.orm import joinedload
 
-from newparp.model import AgeGroup, allowed_level_options, Ban, Invite, ChatUser, Message
+from newparp.model import AgeGroup, allowed_level_options, Ban, Invite, ChatUser, User, Message
 from newparp.model.connections import NewparpRedis, redis_chat_pool
 from newparp.model.user_list import UserListStore
 from newparp.tasks import celery
