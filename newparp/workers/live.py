@@ -102,7 +102,8 @@ class ChatHandler(WebSocketHandler):
     def check_origin(self, origin):
         if "localhost" in os.environ["BASE_DOMAIN"].lower():
             return True
-
+        if DEBUG:
+            print("Origin match: %s" % origin_regex.match(origin))
         return origin_regex.match(origin) is not None
 
     @coroutine
