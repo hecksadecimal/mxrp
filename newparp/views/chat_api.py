@@ -48,7 +48,7 @@ def send():
         abort(400)
 
     text = request.form["text"].strip()[:Message.MAX_LENGTH]
-    raw_text = request.form["raw_text"].strip()[:Message.MAX_LENGTH]
+    raw_text = request.form["text"].strip()[:Message.MAX_LENGTH]
 
     if text == "":
         abort(400)
