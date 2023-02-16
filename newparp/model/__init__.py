@@ -1161,7 +1161,7 @@ Index("tags_type_name", Tag.type, Tag.name, unique=True)
 
 # 3. Relationships
 
-User.admin_tier = relation(AdminTier, backref="users")
+User.admin_tier = relation(AdminTier, backref="users", lazy=True)
 User.default_character = relation(
     Character,
     primaryjoin=User.default_character_id == Character.id,
