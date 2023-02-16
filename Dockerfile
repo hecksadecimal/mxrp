@@ -4,6 +4,6 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 ADD ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
-ADD . /usr/src/app
+COPY . /usr/src/app
 EXPOSE 5000
 CMD ["/bin/sh", "/usr/src/app/launch.sh 2>&1"]
