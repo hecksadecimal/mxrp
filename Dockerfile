@@ -5,5 +5,6 @@ WORKDIR /usr/src/app
 ADD ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 COPY . /usr/src/app
+RUN python3 setup.py install
 EXPOSE 5000
 CMD ["/bin/sh", "./launch.sh"]
