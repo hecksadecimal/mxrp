@@ -183,9 +183,9 @@ class ChatHandler(WebSocketHandler):
         # user list to the client.
         if online_state_changed:
             yield thread_pool.submit(send_join_message, self.user_list, self.db, redis, self)
-        else:
-            userlist = yield thread_pool.submit(get_userlist, self.user_list, self.db)
-            self.write_message(json.dumps({"users": userlist}))
+        
+        userlist = yield thread_pool.submit(get_userlist, self.user_list, self.db)
+        self.write_message(json.dumps({"users": userlist}))
 
         self.db.commit()
         self.db.close()
