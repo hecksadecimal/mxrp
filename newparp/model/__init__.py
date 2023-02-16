@@ -222,7 +222,7 @@ class User(Base):
 
     @property
     def is_admin(self):
-        return self.admin_tier_id is not None
+        return self.admin_tier is not None
 
     def has_permission(self, permission):
         if self.is_admin and permission in self.admin_tier.permissions:
