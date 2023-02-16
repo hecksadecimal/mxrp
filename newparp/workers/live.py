@@ -193,6 +193,7 @@ class ChatHandler(WebSocketHandler):
     def on_message(self, message):
         if DEBUG:
             print("message: %s" % message)
+            self.write_message(json.dumps({"ack": True}))
         if message == "ping":
             try:
                 self.user_list.socket_ping(self.id)
