@@ -3,6 +3,7 @@ RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh po
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 ADD . /usr/src/app
-RUN pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache \
+    pip install -r requirements.txt
 EXPOSE 5000
 CMD ["/bin/sh", "/usr/src/app/launch.sh"]
