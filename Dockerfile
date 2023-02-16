@@ -6,4 +6,4 @@ ADD ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 COPY . /usr/src/app
 EXPOSE 5000
-CMD ["/bin/sh", "/usr/src/app/launch.sh 2>&1"]
+CMD ["/bin/sh", "./launch.sh"]

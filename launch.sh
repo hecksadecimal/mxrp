@@ -3,4 +3,4 @@ if [ -z "${MXRP_ENTRYPOINT}" ]; then
     eval "${MXRP_ENTRYPOINT}"
 else
     echo "MXRP_ENTRYPOINT undefined!"
-fi
+fi 2>&1
